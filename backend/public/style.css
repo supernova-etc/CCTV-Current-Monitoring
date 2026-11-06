@@ -1,0 +1,746 @@
+/* ============================================================
+   BAUHAUS DESIGN SYSTEM - LIGHT THEME
+   CCTV Current Monitoring - Bandara Internasional Sultan Hasanuddin
+   ============================================================ */
+
+:root {
+  --bauhaus-bg: #F5F3ED;
+  --bauhaus-surface: #FFFFFF;
+  --bauhaus-black: #121212;
+  --bauhaus-red: #D82B27;
+  --bauhaus-blue: #184CB4;
+  --bauhaus-yellow: #F2B705;
+  --bauhaus-green: #0E9F6E;
+  --bauhaus-muted: #6B7280;
+  --bauhaus-border: 2.5px solid #121212;
+  --bauhaus-shadow: 4px 4px 0px #121212;
+  --bauhaus-shadow-lg: 6px 6px 0px #121212;
+  --font-main: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body.bauhaus-theme {
+  font-family: var(--font-main);
+  background-color: var(--bauhaus-bg);
+  color: var(--bauhaus-black);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.4;
+  background-image: radial-gradient(#D6D3C7 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ============================================================
+   TOP BAR HEADER (BAUHAUS GEOMETRIC)
+   ============================================================ */
+.bauhaus-header {
+  background-color: var(--bauhaus-surface);
+  border-bottom: 3px solid var(--bauhaus-black);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 0 rgba(18, 18, 18, 0.06);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/* Bauhaus Emblem: Circle, Square, Triangle */
+.bauhaus-logo-box {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bauhaus-black);
+  padding: 8px 12px;
+  border-radius: 2px;
+  position: relative;
+}
+
+.shape-circle {
+  width: 12px;
+  height: 12px;
+  background: var(--bauhaus-red);
+  border-radius: 50%;
+}
+
+.shape-square {
+  width: 12px;
+  height: 12px;
+  background: var(--bauhaus-yellow);
+}
+
+.shape-triangle {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 12px solid var(--bauhaus-blue);
+}
+
+.header-tag {
+  display: inline-block;
+  background: var(--bauhaus-yellow);
+  color: var(--bauhaus-black);
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border: 1.5px solid var(--bauhaus-black);
+  letter-spacing: 0.8px;
+  margin-bottom: 3px;
+}
+
+.header-logo-wrapper {
+  display: flex;
+  align-items: center;
+  margin: 3px 0 2px 0;
+}
+
+.header-logo-img {
+  height: 48px;
+  width: auto;
+  max-width: 320px;
+  object-fit: contain;
+  display: block;
+}
+
+.header-sub {
+  font-size: 0.8rem;
+  color: #4B5563;
+  font-weight: 500;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status-badge-bauhaus {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #FFFFFF;
+  border: 2px solid var(--bauhaus-black);
+  padding: 0.35rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 2px 2px 0px var(--bauhaus-black);
+}
+
+.status-indicator {
+  width: 9px;
+  height: 9px;
+  background-color: var(--bauhaus-green);
+  border: 1.5px solid var(--bauhaus-black);
+  border-radius: 50%;
+}
+
+.indicator-blue {
+  background-color: var(--bauhaus-blue);
+}
+
+.bauhaus-btn {
+  background: var(--bauhaus-surface);
+  color: var(--bauhaus-black);
+  font-family: var(--font-main);
+  font-weight: 800;
+  font-size: 0.8rem;
+  border: 2.5px solid var(--bauhaus-black);
+  box-shadow: var(--bauhaus-shadow);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.15s ease;
+  letter-spacing: 0.5px;
+}
+
+.bauhaus-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--bauhaus-black);
+}
+
+.bauhaus-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px var(--bauhaus-black);
+}
+
+.btn-audio.active {
+  background-color: var(--bauhaus-green);
+  color: #FFFFFF;
+}
+
+/* ============================================================
+   EMERGENCY ALARM BANNER (BRUTALIST RED ALERT)
+   ============================================================ */
+.bauhaus-alarm-banner {
+  background-color: var(--bauhaus-red);
+  color: #FFFFFF;
+  border-bottom: 3px solid var(--bauhaus-black);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: alarm-stripe 1.5s infinite linear;
+  box-shadow: 0 4px 15px rgba(216, 43, 39, 0.35);
+}
+
+.bauhaus-alarm-banner.hidden {
+  display: none;
+}
+
+.alarm-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.alarm-danger-box {
+  width: 44px;
+  height: 44px;
+  background: var(--bauhaus-yellow);
+  color: var(--bauhaus-black);
+  border: 3px solid var(--bauhaus-black);
+  font-size: 1.8rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 3px 3px 0px var(--bauhaus-black);
+}
+
+.alarm-kicker {
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: #FFFFFF;
+  color: var(--bauhaus-red);
+  padding: 2px 6px;
+  display: inline-block;
+  letter-spacing: 1px;
+  margin-bottom: 3px;
+}
+
+.alarm-typography h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.alarm-typography p {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #FEE2E2;
+}
+
+.btn-ack {
+  background: var(--bauhaus-yellow);
+  color: var(--bauhaus-black);
+  border: 2.5px solid var(--bauhaus-black);
+  font-weight: 800;
+}
+
+.btn-ack:hover {
+  background: #FFFFFF;
+}
+
+/* ============================================================
+   MAIN CONTAINER & CARD SYSTEM
+   ============================================================ */
+.bauhaus-main {
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  flex: 1;
+  width: 100%;
+}
+
+.bauhaus-card {
+  background: var(--bauhaus-surface);
+  border: 3px solid var(--bauhaus-black);
+  box-shadow: var(--bauhaus-shadow-lg);
+  padding: 1.5rem;
+}
+
+.card-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2.5px solid var(--bauhaus-black);
+  padding-bottom: 0.8rem;
+  margin-bottom: 1.25rem;
+}
+
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.geometric-bullet {
+  width: 14px;
+  height: 14px;
+  background: var(--bauhaus-black);
+  display: inline-block;
+}
+
+.bullet-red { background: var(--bauhaus-red); }
+.bullet-blue { background: var(--bauhaus-blue); }
+
+.card-top-bar h2, .card-top-bar h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.top-bar-meta {
+  display: flex;
+  gap: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.meta-item {
+  background: #EDEAE1;
+  padding: 2px 8px;
+  border: 1px solid var(--bauhaus-black);
+}
+
+.clock-item {
+  background: var(--bauhaus-black);
+  color: #FFFFFF;
+}
+
+/* ============================================================
+   ARCHITECTURAL FLOORPLAN TOPOLOGY (SVG)
+   ============================================================ */
+.floorplan-viewport {
+  width: 100%;
+  border: 2px solid var(--bauhaus-black);
+  background: #FAF9F5;
+  overflow: hidden;
+  position: relative;
+}
+
+#airport-floorplan-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Active Electric Wire Flow (Animated Dashes) */
+.wire-active {
+  stroke: var(--bauhaus-green);
+  stroke-dasharray: 12, 6;
+  animation: power-flow 1.2s linear infinite;
+  transition: stroke 0.3s ease;
+}
+
+@keyframes power-flow {
+  0% { stroke-dashoffset: 36; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.wire-fault {
+  stroke: var(--bauhaus-red) !important;
+  stroke-dasharray: none;
+  animation: wire-blink 0.8s infinite alternate ease-in-out;
+}
+
+@keyframes wire-blink {
+  0% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+.wire-dead {
+  stroke: #9CA3AF !important;
+  stroke-dasharray: 4, 4;
+  animation: none;
+}
+
+/* Sensor Halo */
+.sensor-halo {
+  transition: all 0.3s ease;
+}
+
+.sensor-node.alarm .sensor-halo {
+  fill: rgba(216, 43, 39, 0.35) !important;
+  stroke: var(--bauhaus-red) !important;
+  animation: sensor-pulse 1s infinite alternate;
+}
+
+@keyframes sensor-pulse {
+  0% { r: 22px; stroke-width: 2px; }
+  100% { r: 32px; stroke-width: 4px; }
+}
+
+/* ============================================================
+   METRICS GRID (BAUHAUS GEOMETRIC CARDS)
+   ============================================================ */
+.bauhaus-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.metric-box {
+  background: var(--bauhaus-surface);
+  border: 3px solid var(--bauhaus-black);
+  box-shadow: var(--bauhaus-shadow);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.metric-box:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--bauhaus-shadow-lg);
+}
+
+/* Card Top Border Stripes */
+.box-yellow { border-top: 8px solid var(--bauhaus-yellow); }
+.box-blue { border-top: 8px solid var(--bauhaus-blue); }
+.box-red { border-top: 8px solid var(--bauhaus-red); }
+
+.box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.box-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #4B5563;
+}
+
+.box-pill {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border: 1.5px solid var(--bauhaus-black);
+}
+
+.pill-ok {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.pill-bad {
+  background: #FEE2E2;
+  color: var(--bauhaus-red);
+}
+
+.box-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.box-current-val {
+  font-family: var(--font-mono);
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--bauhaus-black);
+  letter-spacing: -1px;
+}
+
+.box-current-val small {
+  font-size: 1.2rem;
+  color: #6B7280;
+}
+
+.box-sub-metric {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--bauhaus-blue);
+  margin-top: 0.2rem;
+}
+
+.box-progress {
+  height: 8px;
+  background: #E5E7EB;
+  border: 1.5px solid var(--bauhaus-black);
+  margin-top: 1rem;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--bauhaus-black);
+  transition: width 0.3s ease;
+}
+
+/* Alarm State on Card */
+.metric-box.alarm {
+  background: #FFF5F5;
+  border-color: var(--bauhaus-red);
+  box-shadow: 4px 4px 0px var(--bauhaus-red);
+}
+
+.metric-box.alarm .box-current-val {
+  color: var(--bauhaus-red);
+}
+
+.metric-box.alarm .bar-fill {
+  background: var(--bauhaus-red);
+}
+
+/* ============================================================
+   SPLIT LAYOUT: SIMULATION & HISTORY
+   ============================================================ */
+.bauhaus-split-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .bauhaus-split-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mode-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  background: #E5E7EB;
+  border: 1.5px solid var(--bauhaus-black);
+  padding: 2px 6px;
+}
+
+.bauhaus-note {
+  font-size: 0.85rem;
+  color: #4B5563;
+  margin-bottom: 1.25rem;
+}
+
+/* Preset Buttons Grid */
+.bauhaus-btn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.preset-bauhaus-btn {
+  background: #FFFFFF;
+  border: 2px solid var(--bauhaus-black);
+  box-shadow: 3px 3px 0px var(--bauhaus-black);
+  padding: 0.75rem 1rem;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all 0.15s ease;
+  font-family: var(--font-main);
+}
+
+.preset-bauhaus-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px var(--bauhaus-black);
+}
+
+.preset-bauhaus-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px var(--bauhaus-black);
+}
+
+.preset-bauhaus-btn.active {
+  background: #FEF9C3;
+  border-width: 2.5px;
+}
+
+.btn-color-stripe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+}
+
+.stripe-green { background: var(--bauhaus-green); }
+.stripe-red { background: var(--bauhaus-red); }
+
+.preset-bauhaus-btn strong {
+  font-size: 0.85rem;
+  margin-left: 6px;
+}
+
+.preset-bauhaus-btn small {
+  font-size: 0.7rem;
+  color: #6B7280;
+  margin-left: 6px;
+  margin-top: 2px;
+}
+
+/* Toggle Switches */
+.toggle-group-bauhaus {
+  background: #F3F1E9;
+  border: 2px solid var(--bauhaus-black);
+  padding: 1rem;
+}
+
+.group-title {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  margin-bottom: 0.75rem;
+}
+
+.toggle-items {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.bauhaus-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+}
+
+.bauhaus-toggle input {
+  display: none;
+}
+
+.toggle-slider {
+  width: 44px;
+  height: 24px;
+  background: #E5E7EB;
+  border: 2px solid var(--bauhaus-black);
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.toggle-slider:before {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: var(--bauhaus-black);
+  top: 3px;
+  left: 3px;
+  transition: all 0.2s ease;
+}
+
+.bauhaus-toggle input:checked + .toggle-slider {
+  background: var(--bauhaus-green);
+}
+
+.bauhaus-toggle input:checked + .toggle-slider:before {
+  transform: translateX(20px);
+  background: #FFFFFF;
+}
+
+.toggle-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* ============================================================
+   AUDIT HISTORY TABLE (BAUHAUS CLEAN)
+   ============================================================ */
+.table-frame {
+  max-height: 280px;
+  overflow-y: auto;
+  border: 2px solid var(--bauhaus-black);
+}
+
+.bauhaus-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.bauhaus-table th {
+  background: var(--bauhaus-black);
+  color: #FFFFFF;
+  font-weight: 800;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.bauhaus-table td {
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1.5px solid #E5E7EB;
+  font-weight: 500;
+}
+
+.bauhaus-table tr:hover {
+  background: #F9FAFB;
+}
+
+.empty-cell {
+  text-align: center;
+  color: #9CA3AF;
+  padding: 2rem !important;
+}
+
+/* ============================================================
+   FOOTER (BAUHAUS SIGNATURE)
+   ============================================================ */
+.bauhaus-footer {
+  background: #FFFFFF;
+  border-top: 3px solid var(--bauhaus-black);
+  padding: 1.5rem 2rem;
+  margin-top: 3rem;
+}
+
+.footer-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #4B5563;
+}
+
+.footer-shapes {
+  display: flex;
+  gap: 4px;
+}
+
+.footer-shapes span {
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--bauhaus-black);
+}
+
+.shape-red { background: var(--bauhaus-red); }
+.shape-blue { background: var(--bauhaus-blue); }
+.shape-yellow { background: var(--bauhaus-yellow); }

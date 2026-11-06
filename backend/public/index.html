@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CCTV Current Monitoring - Bandara Sultan Hasanuddin (Bauhaus Edition)</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bauhaus-theme">
+
+  <!-- TOP BAR BAUHAUS -->
+  <header class="bauhaus-header">
+    <div class="header-left">
+      <!-- <div class="bauhaus-logo-box">
+        <span class="shape-circle"></span>
+        <span class="shape-square"></span>
+        <span class="shape-triangle"></span>http://localhost:3000/
+      </div> -->
+      <div class="header-titles">
+        <span class="header-tag">MEP ELECTRICAL MONITORING &bull; TERMINAL 1</span>
+        <div class="header-logo-wrapper">
+          <img src="images/airport-logo.png" alt="Sultan Hasanuddin International Airport" class="header-logo-img">
+        </div>
+        <p class="header-sub">Instalasi Aliran Listrik CCTV &bull; Fault Localization System (ESP32 + ACS712)</p>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="status-badge-bauhaus">
+        <span class="status-indicator" id="socket-indicator"></span>
+        <span>WS: <strong id="ws-status">ONLINE</strong></span>
+      </div>
+      <div class="status-badge-bauhaus">
+        <span class="status-indicator indicator-blue" id="mode-indicator"></span>
+        <span>MODE: <strong id="mode-status">LIVE</strong></span>
+      </div>
+      <button class="bauhaus-btn btn-audio" id="audio-toggle-btn" title="Aktifkan audio sirine alarm">
+        <span class="audio-icon" id="audio-icon">🔇</span>
+        <span id="audio-label">AKTIFKAN ALARM AUDIO</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- EMERGENCY ALARM BANNER (BAUHAUS RED BRUTALIST) -->
+  <div class="bauhaus-alarm-banner hidden" id="alarm-banner">
+    <div class="alarm-left">
+      <div class="alarm-danger-box">!</div>
+      <div class="alarm-typography">
+        <div class="alarm-kicker">PERINGATAN GANGGUAN SISTEM (ALARM AKTIF)</div>
+        <h2 id="alarm-title">TERDETEKSI GANGGUAN PADA ALIRAN LISTRIK CCTV</h2>
+        <p id="alarm-location">Lokasi Gangguan: Mengidentifikasi...</p>
+      </div>
+    </div>
+    <div class="alarm-right">
+      <button class="bauhaus-btn btn-ack" id="btn-ack">ACKNOWLEDGE / SENYAPKAN SIRINE</button>
+    </div>
+  </div>
+
+  <main class="bauhaus-main">
+
+    <!-- DENAH INSTALASI LISTRIK (ARCHITECTURAL FLOORPLAN TOPOLOGY) -->
+    <section class="bauhaus-card floorplan-card">
+      <div class="card-top-bar">
+        <div class="top-bar-left">
+          <span class="geometric-bullet"></span>
+          <h2>DENAH INSTALASI KELISTRIKAN CCTV (TERMINAL GATE 5)</h2>
+        </div>
+        <div class="top-bar-meta">
+          <span class="meta-item">SKALA: 1:100</span>
+          <span class="meta-item">REF: DWG-MEP-CCTV-05</span>
+          <span class="meta-item clock-item" id="live-clock">--:--:-- WITA</span>
+        </div>
+      </div>
+
+      <!-- DENAH BANDARA INTERAKTIF (SVG FLOORPLAN) -->
+      <div class="floorplan-viewport">
+        <svg id="airport-floorplan-svg" viewBox="0 0 1100 520" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <!-- Grid pattern untuk nuansa blueprint/arsitektur Bauhaus -->
+            <pattern id="arch-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#E2E0D8" stroke-width="0.8"/>
+            </pattern>
+            <!-- Pattern arsiran dinding (Hatch pattern) -->
+            <pattern id="wall-hatch" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+              <line x1="0" y1="0" x2="0" y2="8" stroke="#D1CEC5" stroke-width="1.5" />
+            </pattern>
+          </defs>
+
+          <!-- BACKGROUND CANVAS ARSITEKTUR -->
+          <rect x="0" y="0" width="1100" height="520" fill="#FAF9F5" />
+          <rect x="0" y="0" width="1100" height="520" fill="url(#arch-grid)" />
+
+          <!-- ==================== RUANGAN-RUANGAN DENAH BANDARA ==================== -->
+          
+          <!-- RUANG 1: RUANG PANEL LISTRIK / MDP & UPS ROOM -->
+          <g id="room-panel" class="arch-room">
+            <rect x="30" y="40" width="220" height="440" fill="#F0EDE4" stroke="#121212" stroke-width="3" />
+            <rect x="30" y="40" width="220" height="28" fill="#121212" />
+            <text x="140" y="59" fill="#FFFFFF" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="700" text-anchor="middle" letter-spacing="1">ZONE A &bull; RUANG PANEL & UPS</text>
+            
+            <!-- Interior Ruang Panel: Rak Baterai & Panel MDP -->
+            <rect x="55" y="90" width="70" height="110" fill="#E2DFC8" stroke="#121212" stroke-width="2" />
+            <text x="90" y="145" fill="#121212" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700" text-anchor="middle">PANEL MDP</text>
+            <text x="90" y="160" fill="#666" font-family="'Space Grotesk', sans-serif" font-size="8" text-anchor="middle">220V AC / 50Hz</text>
+
+            <rect x="55" y="230" width="70" height="90" fill="#E2DFC8" stroke="#121212" stroke-width="2" />
+            <text x="90" y="280" fill="#121212" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700" text-anchor="middle">UPS 10kVA</text>
+            
+            <!-- Simbol Pintu Ruang Panel -->
+            <path d="M 250 260 L 250 320" stroke="#121212" stroke-width="1.5" stroke-dasharray="3,3" />
+            <path d="M 250 320 A 60 60 0 0 1 190 260" fill="none" stroke="#121212" stroke-width="1.5" />
+            <text x="210" y="300" font-size="9" fill="#888" font-family="'Space Grotesk', sans-serif">PINTU 01</text>
+          </g>
+
+          <!-- RUANG 2: KORIDOR & CONCOURSE TERMINAL -->
+          <g id="room-concourse" class="arch-room">
+            <rect x="250" y="40" width="460" height="440" fill="#FCFBF7" stroke="#121212" stroke-width="3" />
+            <rect x="250" y="40" width="460" height="28" fill="#E5E3D8" stroke="#121212" stroke-width="2"/>
+            <text x="480" y="59" fill="#121212" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="700" text-anchor="middle" letter-spacing="1">ZONE B &bull; KORIDOR TERMINAL KEBERANGKATAN</text>
+
+            <!-- Pilar Beton Struktur Bandara (Columns) -->
+            <rect x="360" y="120" width="24" height="24" fill="#121212" />
+            <rect x="580" y="120" width="24" height="24" fill="#121212" />
+            <rect x="360" y="360" width="24" height="24" fill="#121212" />
+            <rect x="580" y="360" width="24" height="24" fill="#121212" />
+            
+            <!-- Garis Alur Lalu Lintas Penumpang (Passenger Wayfinding) -->
+            <path d="M 280 260 L 680 260" stroke="#DDDBCF" stroke-width="2" stroke-dasharray="6,6"/>
+            <text x="480" y="275" fill="#B5B2A1" font-family="'Space Grotesk', sans-serif" font-size="9" font-weight="600" text-anchor="middle" letter-spacing="2">ARAH PENUMPANG MENUJU BOARDING GATE ➔</text>
+          </g>
+
+          <!-- RUANG 3: RUANG TUNGGU & GATE 5 (CCTV ZONE) -->
+          <g id="room-gate5" class="arch-room">
+            <rect x="710" y="40" width="360" height="440" fill="#F7F5EC" stroke="#121212" stroke-width="3" />
+            <rect x="710" y="40" width="360" height="28" fill="#1E40AF" />
+            <text x="890" y="59" fill="#FFFFFF" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="700" text-anchor="middle" letter-spacing="1">ZONE C &bull; WAITING LOUNGE & BOARDING GATE 5</text>
+
+            <!-- Deretan Kursi Tunggu Bandara (Seating Layout) -->
+            <g stroke="#121212" stroke-width="1.2" fill="#E2DFC8">
+              <rect x="750" y="110" width="30" height="20" rx="3"/>
+              <rect x="790" y="110" width="30" height="20" rx="3"/>
+              <rect x="830" y="110" width="30" height="20" rx="3"/>
+
+              <rect x="750" y="140" width="30" height="20" rx="3"/>
+              <rect x="790" y="140" width="30" height="20" rx="3"/>
+              <rect x="830" y="140" width="30" height="20" rx="3"/>
+
+              <rect x="750" y="340" width="30" height="20" rx="3"/>
+              <rect x="790" y="340" width="30" height="20" rx="3"/>
+              <rect x="830" y="340" width="30" height="20" rx="3"/>
+            </g>
+            <text x="805" y="180" font-size="8" fill="#888" font-family="'Space Grotesk', sans-serif">KURSI TUNGGU</text>
+
+            <!-- Counter Boarding Gate 5 -->
+            <rect x="940" y="110" width="100" height="45" fill="#FCD34D" stroke="#121212" stroke-width="2"/>
+            <text x="990" y="132" fill="#121212" font-family="'Space Grotesk', sans-serif" font-size="9" font-weight="700" text-anchor="middle">COUNTER GATE 5</text>
+            <text x="990" y="146" fill="#121212" font-family="'JetBrains Mono', monospace" font-size="8" text-anchor="middle">BOARDING PASS</text>
+
+            <!-- Glass Curtain Wall (Dinding Kaca Fasad Bandara Menghadap Apron) -->
+            <line x1="1065" y1="40" x2="1065" y2="480" stroke="#0284C7" stroke-width="5" stroke-dasharray="15,4"/>
+            <text x="1058" y="270" fill="#0284C7" font-family="'Space Grotesk', sans-serif" font-size="9" font-weight="700" transform="rotate(-90 1058 270)" letter-spacing="2">DINDING KACA FASAD APRON</text>
+          </g>
+
+          <!-- ==================== JALUR PIPA KELISTRIKAN (CONDUIT & CABLE TRAY) ==================== -->
+          
+          <!-- Background Cable Conduit Pathway (Garis Fisik Pipa) -->
+          <g class="cable-infrastructure">
+            <!-- Pipa Segmen 1 (Dari Panel MDP ke Sensor 1) -->
+            <path id="conduit-path-1" d="M 125 145 L 180 145 L 180 200 L 245 200" fill="none" stroke="#D1D5DB" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/>
+            
+            <!-- Cable Tray Segmen 2 (Dari Sensor 1 melalui Plafon Koridor ke Sensor 2) -->
+            <path id="conduit-path-2" d="M 255 200 L 480 200" fill="none" stroke="#D1D5DB" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/>
+            
+            <!-- Cable Tray Segmen 3 (Dari Sensor 2 menuju Gate 5 / Tiang CCTV) -->
+            <path id="conduit-path-3" d="M 480 200 L 760 200 L 760 230 L 920 230" fill="none" stroke="#D1D5DB" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/>
+
+            <!-- Pipa Drop Segmen 4 (Dari Sensor 3 ke Adaptor PoE & CCTV) -->
+            <path id="conduit-path-4" d="M 920 230 L 990 230" fill="none" stroke="#D1D5DB" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/>
+          </g>
+
+          <!-- ACTIVE ELECTRICITY FLOW (GARIS ARUS AKTIF DENGAN ANIMASI) -->
+          <g class="active-power-cables">
+            <!-- Arus 1: Sumber ke Sensor 1 -->
+            <path id="wire-segment-1" class="wire-active" d="M 125 145 L 180 145 L 180 200 L 245 200" fill="none" stroke="#10B981" stroke-width="5" stroke-linejoin="round"/>
+            
+            <!-- Arus 2: Sensor 1 ke Sensor 2 (Bentangan Koridor) -->
+            <path id="wire-segment-2" class="wire-active" d="M 255 200 L 480 200" fill="none" stroke="#10B981" stroke-width="5" stroke-linejoin="round"/>
+            
+            <!-- Arus 3: Sensor 2 ke Sensor 3 (Masuk Gate 5) -->
+            <path id="wire-segment-3" class="wire-active" d="M 480 200 L 760 200 L 760 230 L 920 230" fill="none" stroke="#10B981" stroke-width="5" stroke-linejoin="round"/>
+
+            <!-- Arus 4: Sensor 3 ke CCTV -->
+            <path id="wire-segment-4" class="wire-active" d="M 920 230 L 990 230" fill="none" stroke="#10B981" stroke-width="5" stroke-linejoin="round"/>
+          </g>
+
+          <!-- Label Penjelasan Conduit -->
+          <text x="365" y="185" fill="#4B5563" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="600">CABLE TRAY CEILING 150x50mm</text>
+          <text x="770" y="218" fill="#4B5563" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="600">CONDUIT PVC Ø20mm</text>
+
+          <!-- ==================== TITIK KOMPONEN & SENSOR ==================== -->
+
+          <!-- TITIK SUMBER: PANEL MDP (POWER INJECTION) -->
+          <g id="node-source" class="mep-node" transform="translate(125, 145)">
+            <circle cx="0" cy="0" r="16" fill="#121212" stroke="#FFFFFF" stroke-width="2"/>
+            <text x="0" y="5" fill="#FCD34D" font-size="14" text-anchor="middle" font-weight="bold">⚡</text>
+            <rect x="-45" y="22" width="90" height="22" fill="#121212" rx="4"/>
+            <text x="0" y="36" fill="#FFFFFF" font-family="'Space Grotesk', sans-serif" font-size="9" font-weight="700" text-anchor="middle">SUMBER 220V</text>
+          </g>
+
+          <!-- TITIK SENSOR 1: SISI SUMBER (DINDING KELUAR RUANG PANEL) -->
+          <g id="node-sensor-1" class="mep-node sensor-node" transform="translate(250, 200)">
+            <circle class="sensor-halo" cx="0" cy="0" r="22" fill="rgba(16, 185, 129, 0.2)" stroke="#10B981" stroke-width="2"/>
+            <rect x="-14" y="-14" width="28" height="28" fill="#121212" rx="3"/>
+            <text x="0" y="4" fill="#FFFFFF" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700" text-anchor="middle">S1</text>
+            
+            <!-- Callout Badge S1 -->
+            <g transform="translate(0, -28)">
+              <rect x="-55" y="-18" width="110" height="22" fill="#FFFFFF" stroke="#121212" stroke-width="1.8" rx="3"/>
+              <text x="0" y="-3" fill="#121212" font-family="'Space Grotesk', sans-serif" font-size="9" font-weight="700" text-anchor="middle">SENSOR 1: <tspan id="svg-val-s1" fill="#10B981">0.052A</tspan></text>
+            </g>
+          </g>
+
+          <!-- TITIK SENSOR 2: JUNCTION BOX TENGAH KORIDOR -->
+          <g id="node-sensor-2" class="mep-node sensor-node" transform="translate(480, 200)">
+            <circle class="sensor-halo" cx="0" cy="0" r="22" fill="rgba(16, 185, 129, 0.2)" stroke="#10B981" stroke-width="2"/>
+            <rect x="-14" y="-14" width="28" height="28" fill="#121212" rx="3"/>
+            <text x="0" y="4" fill="#FFFFFF" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700" text-anchor="middle">S2</text>
+            
+            <!-- Callout Badge S2 -->
+            <g transform="translate(0, -28)">
+              <rect x="-55" y="-18" width="110" height="22" fill="#FFFFFF" stroke="#121212" stroke-width="1.8" rx="3"/>
+              <text x="0" y="-3" fill="#121212" font-family="'Space Grotesk', sans-serif" font-size="9" font-weight="700" text-anchor="middle">SENSOR 2: <tspan id="svg-val-s2" fill="#10B981">0.050A</tspan></text>
+            </g>
+          </g>
+
+          <!-- TITIK SENSOR 3: ENCLOSURE TIANG CCTV GATE 5 -->
+          <g id="node-sensor-3" class="mep-node sensor-node" transform="translate(920, 230)">
+            <circle class="sensor-halo" cx="0" cy="0" r="22" fill="rgba(16, 185, 129, 0.2)" stroke="#10B981" stroke-width="2"/>
+            <rect x="-14" y="-14" width="28" height="28" fill="#121212" rx="3"/>
+            <text x="0" y="4" fill="#FFFFFF" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700" text-anchor="middle">S3</text>
+            
+            <!-- Callout Badge S3 -->
+            <g transform="translate(0, -28)">
+              <rect x="-55" y="-18" width="110" height="22" fill="#FFFFFF" stroke="#121212" stroke-width="1.8" rx="3"/>
+              <text x="0" y="-3" fill="#121212" font-family="'Space Grotesk', sans-serif" font-size="9" font-weight="700" text-anchor="middle">SENSOR 3: <tspan id="svg-val-s3" fill="#10B981">0.048A</tspan></text>
+            </g>
+          </g>
+
+          <!-- TITIK BEBAN: ADAPTOR POE & KAMERA CCTV DOME GATE 5 -->
+          <g id="node-cctv" class="mep-node" transform="translate(990, 230)">
+            <!-- Tiang Mounting & Kamera CCTV -->
+            <circle cx="0" cy="0" r="18" fill="#1E40AF" stroke="#121212" stroke-width="2.5"/>
+            <text x="0" y="5" fill="#FFFFFF" font-size="14" text-anchor="middle">📹</text>
+            
+            <!-- Jangkauan Pengawasan Kamera (FOV Cone) -->
+            <path d="M 12 0 L 60 -35 L 60 35 Z" fill="rgba(30, 64, 175, 0.12)" stroke="#1E40AF" stroke-width="1" stroke-dasharray="3,3"/>
+            
+            <rect x="-45" y="24" width="90" height="22" fill="#121212" rx="4"/>
+            <text x="0" y="38" fill="#FFFFFF" font-family="'Space Grotesk', sans-serif" font-size="9" font-weight="700" text-anchor="middle">CCTV GATE 5</text>
+          </g>
+
+          <!-- LEGENDA DENAH BAUHAUS -->
+          <g transform="translate(40, 420)">
+            <rect x="0" y="0" width="460" height="42" fill="#FFFFFF" stroke="#121212" stroke-width="1.5" rx="3"/>
+            <text x="15" y="16" fill="#121212" font-family="'Space Grotesk', sans-serif" font-size="8.5" font-weight="700">LEGENDA INSTALASI:</text>
+            
+            <line x1="15" y1="28" x2="40" y2="28" stroke="#10B981" stroke-width="4"/>
+            <text x="46" y="31" fill="#444" font-family="'Space Grotesk', sans-serif" font-size="8">Arus Normal</text>
+
+            <line x1="110" y1="28" x2="135" y2="28" stroke="#EF4444" stroke-width="4"/>
+            <text x="141" y="31" fill="#444" font-family="'Space Grotesk', sans-serif" font-size="8">Jalur Terputus</text>
+
+            <rect x="210" y="22" width="12" height="12" fill="#121212"/>
+            <text x="228" y="31" fill="#444" font-family="'Space Grotesk', sans-serif" font-size="8">Modul Sensor ACS712</text>
+
+            <circle cx="345" cy="28" r="6" fill="#1E40AF"/>
+            <text x="357" y="31" fill="#444" font-family="'Space Grotesk', sans-serif" font-size="8">Kamera CCTV Bandara</text>
+          </g>
+
+        </svg>
+      </div>
+    </section>
+
+    <!-- METRICS CARDS (BAUHAUS GEOMETRIC BRUTALISM) -->
+    <section class="bauhaus-metrics-grid">
+      
+      <!-- CARD 1: SENSOR 1 -->
+      <div class="metric-box box-yellow" id="card-sensor-1">
+        <div class="box-header">
+          <div class="box-tag">POINT 01 &bull; PANEL UPS</div>
+          <span class="box-pill pill-ok" id="pill-s1">NORMAL</span>
+        </div>
+        <div class="box-body">
+          <div class="box-title">Sensor 1 (Sisi Sumber)</div>
+          <div class="box-current-val" id="val-s1-amp">0.052 <small>A</small></div>
+          <div class="box-sub-metric" id="val-s1-mamp">52.0 mA &bull; 220V AC</div>
+        </div>
+        <div class="box-progress">
+          <div class="bar-fill" id="bar-s1" style="width: 52%;"></div>
+        </div>
+      </div>
+
+      <!-- CARD 2: SENSOR 2 -->
+      <div class="metric-box box-blue" id="card-sensor-2">
+        <div class="box-header">
+          <div class="box-tag">POINT 02 &bull; JUNCTION BOX</div>
+          <span class="box-pill pill-ok" id="pill-s2">NORMAL</span>
+        </div>
+        <div class="box-body">
+          <div class="box-title">Sensor 2 (Jalur Tengah)</div>
+          <div class="box-current-val" id="val-s2-amp">0.050 <small>A</small></div>
+          <div class="box-sub-metric" id="val-s2-mamp">50.0 mA &bull; 220V AC</div>
+        </div>
+        <div class="box-progress">
+          <div class="bar-fill" id="bar-s2" style="width: 50%;"></div>
+        </div>
+      </div>
+
+      <!-- CARD 3: SENSOR 3 -->
+      <div class="metric-box box-red" id="card-sensor-3">
+        <div class="box-header">
+          <div class="box-tag">POINT 03 &bull; TIANG CCTV</div>
+          <span class="box-pill pill-ok" id="pill-s3">NORMAL</span>
+        </div>
+        <div class="box-body">
+          <div class="box-title">Sensor 3 (Dekat Beban/PoE)</div>
+          <div class="box-current-val" id="val-s3-amp">0.048 <small>A</small></div>
+          <div class="box-sub-metric" id="val-s3-mamp">48.0 mA &bull; Input Adaptor</div>
+        </div>
+        <div class="box-progress">
+          <div class="bar-fill" id="bar-s3" style="width: 48%;"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- CONTROL SIMULATION & AUDIT HISTORY -->
+    <div class="bauhaus-split-layout">
+      
+      <!-- SIMULASI SAKLAR (DEMONSTRASI PROTOTYPE) -->
+      <section class="bauhaus-card">
+        <div class="card-top-bar">
+          <div class="top-bar-left">
+            <span class="geometric-bullet bullet-red"></span>
+            <h3>SIMULASI SAKLAR PEMUTUS ARUS (TESTING TOOL)</h3>
+          </div>
+          <span class="mode-tag">INTERACTIVE</span>
+        </div>
+        <p class="bauhaus-note">
+          Simulasikan saklar terputus pada masing-masing segmen instalasi untuk memverifikasi respon alarm dan perubahan visual denah:
+        </p>
+
+        <!-- PRESET BUTTONS (BAUHAUS GEOMETRIC BLOCKS) -->
+        <div class="bauhaus-btn-grid">
+          <button class="preset-bauhaus-btn active" data-scenario="NORMAL">
+            <span class="btn-color-stripe stripe-green"></span>
+            <strong>NORMAL</strong>
+            <small>Semua Aliran Terhubung</small>
+          </button>
+          <button class="preset-bauhaus-btn" data-scenario="FAULT_SOURCE">
+            <span class="btn-color-stripe stripe-red"></span>
+            <strong>PUTUS DI SUMBER</strong>
+            <small>Sensor 1 Terputus (S1=0)</small>
+          </button>
+          <button class="preset-bauhaus-btn" data-scenario="FAULT_MIDPOINT">
+            <span class="btn-color-stripe stripe-red"></span>
+            <strong>PUTUS DI TENGAH</strong>
+            <small>Kabel Koridor Putus (S2=0)</small>
+          </button>
+          <button class="preset-bauhaus-btn" data-scenario="FAULT_CCTV">
+            <span class="btn-color-stripe stripe-red"></span>
+            <strong>PUTUS DEKAT CCTV</strong>
+            <small>Adaptor PoE Putus (S3=0)</small>
+          </button>
+        </div>
+
+        <!-- SAKLAR FISIK TOGGLE -->
+        <div class="toggle-group-bauhaus">
+          <span class="group-title">SAKLAR INDEPENDEN:</span>
+          <div class="toggle-items">
+            <label class="bauhaus-toggle">
+              <input type="checkbox" id="switch-s1" checked>
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Saklar Sumber</span>
+            </label>
+            <label class="bauhaus-toggle">
+              <input type="checkbox" id="switch-s2" checked>
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Saklar Tengah</span>
+            </label>
+            <label class="bauhaus-toggle">
+              <input type="checkbox" id="switch-s3" checked>
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Saklar CCTV</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- AUDIT LOG INSIDEN (TABLE) -->
+      <section class="bauhaus-card">
+        <div class="card-top-bar">
+          <div class="top-bar-left">
+            <span class="geometric-bullet bullet-blue"></span>
+            <h3>RIWAYAT INSIDEN GANGGUAN (AUDIT TRAIL)</h3>
+          </div>
+          <span class="mode-tag">LOG DATABASE</span>
+        </div>
+        <div class="table-frame">
+          <table class="bauhaus-table">
+            <thead>
+              <tr>
+                <th>WAKTU</th>
+                <th>KONDISI</th>
+                <th>LOKASI GANGGUAN</th>
+                <th>READING ARUS</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody id="history-tbody">
+              <tr>
+                <td colspan="5" class="empty-cell">Belum ada riwayat insiden tercatat.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER BAUHAUS -->
+  <footer class="bauhaus-footer">
+    <div class="footer-inner">
+      <div class="footer-shapes">
+        <span class="shape-red"></span>
+        <span class="shape-blue"></span>
+        <span class="shape-yellow"></span>
+      </div>
+      <p>UPG AIRPORT CCTV MONITORING &bull; BAUHAUS ARCHITECTURAL EDITION &bull; BANDARA INTERNASIONAL SULTAN HASANUDDIN MAKASSAR</p>
+    </div>
+  </footer>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
